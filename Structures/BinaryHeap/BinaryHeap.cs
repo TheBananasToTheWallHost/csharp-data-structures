@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BananaTurtles.CSharp.Utils;
+using BananaTurtles.CSharp.Extensions;
 using System.Linq;
 using System.Collections;
 
@@ -18,13 +19,15 @@ namespace BananaTurtles.CSharp.DataStructures
 
         bool ICollection<T>.IsReadOnly => throw new NotImplementedException();
 
-        private T[] heapArray;
+        private T[] _heapArray;
         private readonly int DEFAULT_SIZE = 16;
+        private HeapType _heapType;
 
         #region Constructors
         public BinaryHeap(HeapType heapType = HeapType.Min)
         {
-            heapArray = new T[DEFAULT_SIZE];
+            _heapArray = new T[DEFAULT_SIZE];
+            _heapType = heapType;
         }
 
         public BinaryHeap(IEnumerable<T> enumerable, HeapType heapType = HeapType.Min) : this(enumerable.ToArray(), heapType){
@@ -33,21 +36,24 @@ namespace BananaTurtles.CSharp.DataStructures
 
         public BinaryHeap(Span<T> span, HeapType heapType = HeapType.Min)
         {
+            _heapType = heapType;
             int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(span.Length, strict: false));
 
-            T[] heapArray = new T[size];
+            _heapArray = new T[size];
             Count = span.Length;
         }
 
         public BinaryHeap(T[] array, HeapType heapType = HeapType.Min)
         {
+            _heapType = heapType;
             int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(array.Length, strict: false));
 
-            T[] heapArray = new T[size];
+            _heapArray = new T[size];
             Count = array.Length;
         }
 
         public BinaryHeap(IList<T> list, HeapType heapType = HeapType.Min){
+            _heapType = heapType;
             int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(list.Count, strict: false));
 
             T[] heapArray = new T[size];
@@ -84,6 +90,25 @@ namespace BananaTurtles.CSharp.DataStructures
             GrowUnderlyingArray();
 
             int insertionIndex = Count;
+            _heapArray[insertionIndex] = value;
+
+            int parentIndex;
+            while((parentIndex = Parent(insertionIndex)) >= 0){
+                // We change the comparison values here to allow the BinaryHeap to support MinHeaps and MaxHeaps.
+                // In a max heap we swap if the parent is less than the child, in a min heap we swap if the child is
+                // less than the parent. 
+                T leftVal = _heapType == HeapType.Max ? _heapArray[parentIndex] : _heapArray[insertionIndex];
+                T rightVal = _heapType == HeapType.Max ? _heapArray[insertionIndex] : _heapArray[parentIndex];
+
+                if(leftVal.CompareTo(rightVal) < 0){
+                    _heapArray.Swap(insertionIndex, parentIndex);
+                    insertionIndex = parentIndex;
+                }
+                else{
+                    break;
+                }
+            }
+            Count++;
             return true;
         }
 
@@ -92,7 +117,7 @@ namespace BananaTurtles.CSharp.DataStructures
         }
 
         public T GetValue(int index){
-            return index >= Count ? default(T) : heapArray[index];
+            return index >= Count ? default(T) : _heapArray[index];
         }
 
         public bool Contains(T value){
@@ -119,18 +144,30 @@ namespace BananaTurtles.CSharp.DataStructures
 
         }
 
+        public IEnumerator<T> GetEnumerator()
+        {
+            for(int i = 0; i < Count; i++){
+                yield return _heapArray[i];
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
         #endregion
 
         #region Helpers
         private bool GrowUnderlyingArray(){
-            if(heapArray.Length - Count > 3 || heapArray.Length == Int32.MaxValue){
+            if(_heapArray.Length - Count > 3 || _heapArray.Length == Int32.MaxValue){
                 return false;
             }
 
-            int newSize = MathUtils.CeilingToPowerOfTwo(heapArray.Length + 1); 
+            int newSize = MathUtils.CeilingToPowerOfTwo(_heapArray.Length + 1); 
             T[] newHeapArray = new T[newSize];
-            heapArray.CopyTo(newHeapArray, 0);
-            heapArray = newHeapArray;
+            _heapArray.CopyTo(newHeapArray, 0);
+            _heapArray = newHeapArray;
 
             return true;
         }
@@ -141,18 +178,6 @@ namespace BananaTurtles.CSharp.DataStructures
 
         private void SiftDown(){
 
-        }
-
-        public IEnumerator<T> GetEnumerator()
-        {
-            for(int i = 0; i < Count; i++){
-                yield return heapArray[i];
-            }
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return this.GetEnumerator();
         }
         #endregion
 
