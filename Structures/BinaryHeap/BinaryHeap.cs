@@ -62,9 +62,7 @@ namespace BananaTurtles.CSharp.DataStructures
         public BinaryHeap(Span<T> span, HeapType heapType = HeapType.Min)
         {
             _heapType = heapType;
-            int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(span.Length, strict: false));
-
-            _heapArray = new T[size];
+            InitializeUnderlyingArray(span.Length);
             Count = span.Length;
         }
 
@@ -77,9 +75,7 @@ namespace BananaTurtles.CSharp.DataStructures
         public BinaryHeap(T[] array, HeapType heapType = HeapType.Min)
         {
             _heapType = heapType;
-            int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(array.Length, strict: false));
-
-            _heapArray = new T[size];
+            InitializeUnderlyingArray(array.Length);
             Count = array.Length;
         }
 
@@ -91,9 +87,7 @@ namespace BananaTurtles.CSharp.DataStructures
         /// <param name="heapType">The type of the heap. This can be either Min or Max.</param>
         public BinaryHeap(IList<T> list, HeapType heapType = HeapType.Min){
             _heapType = heapType;
-            int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(list.Count, strict: false));
-
-            T[] heapArray = new T[size];
+            InitializeUnderlyingArray(list.Count);
             Count = list.Count;
         }
         #endregion
@@ -279,6 +273,14 @@ namespace BananaTurtles.CSharp.DataStructures
 
         private decimal Usage(int items, int size){
             return items/size;
+        }
+
+        private void InitializeUnderlyingArray(int inputCollectionSize){
+            int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(inputCollectionSize, strict: false));
+            if(Usage(inputCollectionSize, size) > .9m && size != int.MaxValue){
+                size = MathUtils.CeilingToPowerOfTwo(size + 1, strict: false);
+            }
+            _heapArray = new T[size];
         }
 
         private void Heapify(){
