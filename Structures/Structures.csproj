@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BananaTurtles.CSharp.Extensions" Version="2.1.0" />
     <PackageReference Include="BananaTurtles.CSharp.Utils" Version="1.0.0" />
   </ItemGroup>
 
