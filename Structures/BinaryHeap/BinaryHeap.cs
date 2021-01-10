@@ -7,12 +7,20 @@ using System.Collections;
 
 namespace BananaTurtles.CSharp.DataStructures
 {
+    /// <summary>
+    /// Represents a binary heap structure.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class BinaryHeap<T> : ICollection<T> where T : IComparable<T>
     {
         private int _count;
+
+        /// <summary>
+        /// Gets the number of values in the BinaryHeap.
+        /// </summary>
         public int Count{
             get => _count;
-            set => _count = value;
+            private set => _count = value;
         }
 
         int ICollection<T>.Count => throw new NotImplementedException();
@@ -24,16 +32,33 @@ namespace BananaTurtles.CSharp.DataStructures
         private HeapType _heapType;
 
         #region Constructors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{T}"/> class that is empty.
+        /// </summary>
+        /// <param name="heapType">The type of the heap. This can be either Min or Max. <see cref="HeapType"/></param>
         public BinaryHeap(HeapType heapType = HeapType.Min)
         {
             _heapArray = new T[DEFAULT_SIZE];
             _heapType = heapType;
+            List<int> list = new List<int>();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{T}"/> class that is filled with the values in 
+        /// <paramref name="enumerable"/>.
+        /// </summary>
+        /// <param name="enumerable">An IEnumerable whose values will be added to the BinaryHeap.</param>
+        /// <param name="heapType">The type of the heap. This can be either Min or Max.</param>
         public BinaryHeap(IEnumerable<T> enumerable, HeapType heapType = HeapType.Min) : this(enumerable.ToArray(), heapType){
-        
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{T}"> class that is filled with the values in 
+        /// <paramref name="span"/>. 
+        /// </summary>
+        /// <param name="span">A Span whoe values will be added to the BinaryHeap.</param>
+        /// <param name="heapType">The type of the heap. This can be either Min or Max.</param>
         public BinaryHeap(Span<T> span, HeapType heapType = HeapType.Min)
         {
             _heapType = heapType;
@@ -43,6 +68,12 @@ namespace BananaTurtles.CSharp.DataStructures
             Count = span.Length;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{T}"> class that is filled with the values in 
+        /// <paramref name="array"/>.  
+        /// </summary>
+        /// <param name="array">An Array whose values will be added to the BinaryHeap.</param>
+        /// <param name="heapType">The type of the heap. This can be either Min or Max.</param>
         public BinaryHeap(T[] array, HeapType heapType = HeapType.Min)
         {
             _heapType = heapType;
@@ -52,6 +83,12 @@ namespace BananaTurtles.CSharp.DataStructures
             Count = array.Length;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryHeap{T}"> class that is filled with the values in 
+        /// <paramref name="list"/>.  
+        /// </summary>
+        /// <param name="list">An IList whose values will be added to the BinaryHeap.</param>
+        /// <param name="heapType">The type of the heap. This can be either Min or Max.</param>
         public BinaryHeap(IList<T> list, HeapType heapType = HeapType.Min){
             _heapType = heapType;
             int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(list.Count, strict: false));
@@ -62,26 +99,66 @@ namespace BananaTurtles.CSharp.DataStructures
         #endregion
 
         #region Heap Functionality
+
+        /// <summary>
+        /// Gets the left child's index for the given <paramref name="parentIndex"/>. 
+        /// </summary>
+        /// <param name="parentIndex">The index of the item you want the left child of.</param>
+        /// <returns>The index of the left child or -1 if no child exists.</returns>
         public int LeftChild(int parentIndex){
+            if(parentIndex < 0){
+                return -1;
+            }
+
             int childIndex = (parentIndex * 2) + 1;
 
             return childIndex >= Count ? -1 : childIndex;
         }
 
+        /// <summary>
+        /// Gets the right child's index for the given <paramref name="parentIndex"/>.
+        /// </summary>
+        /// <param name="parentIndex">The index of the item you want the right child of.</param>
+        /// <returns>The index of the right child or -1 if no child exists.</returns>
         public int RightChild(int parentIndex){
+            if(parentIndex < 0){
+                return -1;
+            }
+
             int childIndex = (parentIndex * 2) + 2;
 
             return childIndex >= Count ? -1 : childIndex;
         }
 
+        /// <summary>
+        /// Gets the parents index for the given <paramref name="childIndex"/>
+        /// </summary>
+        /// <param name="childIndex">The index of the item you want the parent of.</param>
+        /// <returns>The index of the parent or -1 if no parent exists</returns>
         public int Parent(int childIndex){
-            return (childIndex - 1)/2;
+            if(childIndex <= 0){
+                return -1;
+            }
+
+            int parentIndex = (childIndex - 1)/2;
+
+            return parentIndex >= Count ? -1 : parentIndex; 
         }
 
+        /// <summary>
+        /// Adds the given value to the BinaryHeap.
+        /// </summary>
+        /// <param name="value">The value to add.</param>
         public void Add(T value){
             TryAddValue(value);
         }
 
+        /// <summary>
+        /// Adds the given value to the BinaryHeap. The return value indicates whether the operation
+        /// succeeeded.
+        /// </summary>
+        /// <param name="value">The value to add.</param>
+        /// <returns>Returns true if <paramref name="value"/> was successfully added, false otherwise.</returns>
         public bool TryAddValue(T value){
             if(Count == Int32.MaxValue){
                 return false;   
@@ -116,8 +193,21 @@ namespace BananaTurtles.CSharp.DataStructures
 
         }
 
+        /// <summary>
+        /// Gets the value at the given index.
+        /// </summary>
+        /// <param name="index">The index of the value to get.</param>
+        /// <returns>The value at the given <paramref name="index"/></returns>
+        /// <exception cref="ArgumentOutOfRangeException"/>
         public T GetValue(int index){
-            return index >= Count ? default(T) : _heapArray[index];
+            if(index < 0 || index >= Count){
+                throw new ArgumentOutOfRangeException(
+                    $"The input index \"{index}\" does not currently exist in the BinaryHeap, " +
+                    "or is otherwise not a valid index."
+                    );
+            }
+
+            return _heapArray[index];
         }
 
         public bool Contains(T value){
@@ -144,6 +234,10 @@ namespace BananaTurtles.CSharp.DataStructures
 
         }
 
+        /// <summary>
+        /// Returns an <see cref="IEnumerator{T}"/> for the <see cref="BinaryHeap{T}"/>.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerator{T}"/> for the <see cref="BinaryHeap{T}"/></returns>
         public IEnumerator<T> GetEnumerator()
         {
             for(int i = 0; i < Count; i++){
@@ -159,8 +253,15 @@ namespace BananaTurtles.CSharp.DataStructures
         #endregion
 
         #region Helpers
+
+        /// <summary>
+        /// Grows the size of the underlying array <see cref="_heapArray"/> in order to make sure items can always be added to the 
+        /// <see cref="BinaryHeap{T}"/>. The underlying array is grown when there is over 90% usage. 
+        /// </summary>
+        /// <returns></returns>
         private bool GrowUnderlyingArray(){
-            if(_heapArray.Length - Count > 3 || _heapArray.Length == Int32.MaxValue){
+            
+            if(Usage(Count) < .9m || _heapArray.Length == Int32.MaxValue){
                 return false;
             }
 
@@ -172,6 +273,14 @@ namespace BananaTurtles.CSharp.DataStructures
             return true;
         }
 
+        private decimal Usage(int items){
+            return items / _heapArray.Length;
+        }
+
+        private decimal Usage(int items, int size){
+            return items/size;
+        }
+
         private void Heapify(){
 
         }
@@ -181,6 +290,9 @@ namespace BananaTurtles.CSharp.DataStructures
         }
         #endregion
 
+        /// <summary>
+        /// Defines constants for types of heaps: Min and Max.
+        /// </summary>
         public enum HeapType{
             Max,
             Min
