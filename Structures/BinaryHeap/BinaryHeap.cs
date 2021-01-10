@@ -267,12 +267,23 @@ namespace BananaTurtles.CSharp.DataStructures
             return true;
         }
 
-        private decimal Usage(int items){
-            return items / _heapArray.Length;
+        /// <summary>
+        /// Returns the usage ratio for the underlying array given <paramref name="itemCount"/> values are added.
+        /// </summary>
+        /// <param name="itemCount">The number of items that are theoretically being added.</param>
+        /// <returns>The usage ratio for the underlying array given <paramref name="itemCount"/> values are added.</returns>
+        private decimal Usage(int itemCount){
+            return itemCount / _heapArray.Length;
         }
 
-        private decimal Usage(int items, int size){
-            return items/size;
+        /// <summary>
+        /// Returns the usage ratio for the underlying array given <paramref name="itemCount"/> values are added.
+        /// </summary>
+        /// <param name="itemCount">The number of items that are theoretically being added.</param>
+        /// <parame name="size"></param>
+        /// <returns>The usage ratio for the underlying array given <paramref name="itemCount"/> values are added.</returns>
+        private decimal Usage(int itemCount, int size){
+            return itemCount/size;
         }
 
         private void InitializeUnderlyingArray(int inputCollectionSize){
