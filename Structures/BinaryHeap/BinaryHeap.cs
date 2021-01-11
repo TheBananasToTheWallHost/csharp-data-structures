@@ -250,11 +250,14 @@ namespace BananaTurtles.CSharp.DataStructures
         }
 
         public bool Contains(T value){
-
+            return Contains(value, out int _);
         }
 
         public bool Contains(T value, out int index){
+            int at = Array.IndexOf(_heapArray, value);
+            index = at;
 
+            return index == -1 ? false : true;
         }
 
         public void CopyTo(T[] array, int arrayIndex){
