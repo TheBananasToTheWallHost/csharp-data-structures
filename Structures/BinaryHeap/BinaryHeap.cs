@@ -289,7 +289,8 @@ namespace BananaTurtles.CSharp.DataStructures
         }
 
         public void Clear(){
-
+            _heapArray = new T[DEFAULT_SIZE];
+            Count = 0;
         }
 
         public bool Remove(T value){
