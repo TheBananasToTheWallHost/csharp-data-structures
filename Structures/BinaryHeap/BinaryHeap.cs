@@ -185,6 +185,15 @@ namespace BananaTurtles.CSharp.DataStructures
             return true;
         }
 
+        public T Pop(){
+            if(Count < 1){
+                throw new InvalidOperationException("There are no items to pop.");
+            }
+
+            Pop(out T value);
+            return value;
+        }
+
         public bool Pop(out T topValue){
             if(Count < 1){
                 topValue = default(T);
@@ -261,7 +270,22 @@ namespace BananaTurtles.CSharp.DataStructures
         }
 
         public void CopyTo(T[] array, int arrayIndex){
+            if(array is null){
+                throw new ArgumentNullException($"{nameof(array)} is null");
+            }
+            
+            if(array.Length - arrayIndex < Count){
+                throw new ArgumentException(
+                    $"Not enough space in {nameof(array)} to copy the values in the Binary Heap. " +
+                    $"Available space ({array.Length - arrayIndex}, needed space ({Count}))"
+                    );
+            }
 
+            if(arrayIndex < 0){
+                throw new ArgumentOutOfRangeException($"Negative value used for {nameof(arrayIndex)}.");
+            }
+
+            _heapArray.CopyTo(array, arrayIndex);
         }
 
         public void Clear(){
