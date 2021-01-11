@@ -23,9 +23,9 @@ namespace BananaTurtles.CSharp.DataStructures
             private set => _count = value;
         }
 
-        int ICollection<T>.Count => throw new NotImplementedException();
-
-        bool ICollection<T>.IsReadOnly => throw new NotImplementedException();
+        public bool IsReadOnly {
+            get => false;
+        }
 
         private T[] _heapArray;
         private readonly int DEFAULT_SIZE = 16;
@@ -162,29 +162,74 @@ namespace BananaTurtles.CSharp.DataStructures
 
             int insertionIndex = Count;
             _heapArray[insertionIndex] = value;
+            Count++;
 
             int parentIndex;
             while((parentIndex = Parent(insertionIndex)) >= 0){
-                // We change the comparison values here to allow the BinaryHeap to support MinHeaps and MaxHeaps.
+                // Comparison values here are dependent on whether the heap is a MinHeap or a MaxHeap.
                 // In a max heap we swap if the parent is less than the child, in a min heap we swap if the child is
-                // less than the parent. 
-                T leftVal = _heapType == HeapType.Max ? _heapArray[parentIndex] : _heapArray[insertionIndex];
-                T rightVal = _heapType == HeapType.Max ? _heapArray[insertionIndex] : _heapArray[parentIndex];
+                // less than the parent. Here, insertionIndex is the child.
+                T comparisonLeft = _heapType == HeapType.Max ? _heapArray[parentIndex] : _heapArray[insertionIndex];
+                T comparisonRight = _heapType == HeapType.Max ? _heapArray[insertionIndex] : _heapArray[parentIndex];
 
-                if(leftVal.CompareTo(rightVal) < 0){
+                if(comparisonLeft.CompareTo(comparisonRight) < 0){
                     _heapArray.Swap(insertionIndex, parentIndex);
                     insertionIndex = parentIndex;
+                    continue;
                 }
-                else{
-                    break;
-                }
+
+                // If this point is reached, the value is in the correct position and the heap property is maintained
+                break;
+                
             }
-            Count++;
             return true;
         }
 
-        public T Pop(){
+        public bool Pop(out T topValue){
+            if(Count < 1){
+                topValue = default(T);
+                return false;
+            }
 
+            T value = _heapArray[0];
+
+            int insertionIndex = 0;
+            _heapArray[insertionIndex] = _heapArray[Count - 1];
+            Count--;
+
+            int leftChild, rightChild;
+
+            while((leftChild = LeftChild(insertionIndex)) > 0 && (rightChild = RightChild(insertionIndex)) > 0){
+                // Comparison values here are dependent on whether the heap is a MinHeap or a MaxHeap.
+                // In a max heap we swap if the parent is less than the child, in a min heap we swap if the child is
+                // less than the parent. Here, insertionIndex is the parent.
+                T comparisonLeft = _heapType == HeapType.Max ? _heapArray[insertionIndex] : _heapArray[leftChild];
+                T comparisonRight = _heapType == HeapType.Max ? _heapArray[leftChild] : _heapArray[insertionIndex];
+
+                // Test left child and parent
+                if(comparisonLeft.CompareTo(comparisonRight) < 0){
+                    _heapArray.Swap(leftChild, insertionIndex);
+                    insertionIndex = leftChild;
+                    continue;
+                }
+
+                // Need to recalculate the comparison values in order to test the parent and right child.
+                comparisonLeft = _heapType == HeapType.Max ? _heapArray[insertionIndex] : _heapArray[rightChild];
+                comparisonRight = _heapType == HeapType.Max ? _heapArray[rightChild] : _heapArray[insertionIndex];
+
+                if(comparisonLeft.CompareTo(comparisonRight) < 0){
+                    _heapArray.Swap(rightChild, insertionIndex);
+                    insertionIndex = rightChild;
+                    continue;
+                }
+
+                // If this point is reached, the value that was pulled up from the bottom of the heap is in the correct 
+                // position and the heap property is maintained
+                break;
+            }
+
+            topValue = value;
+            return true;
         }
 
         /// <summary>
@@ -221,7 +266,8 @@ namespace BananaTurtles.CSharp.DataStructures
         }
 
         public bool Remove(T value){
-
+            int index = Array.IndexOf(_heapArray, value);
+            return Remove(index);
         }
 
         public bool Remove(int index){
@@ -277,15 +323,20 @@ namespace BananaTurtles.CSharp.DataStructures
         }
 
         /// <summary>
-        /// Returns the usage ratio for the underlying array given <paramref name="itemCount"/> values are added.
+        /// Returns the usage ratio for some <paramref name="size"/> collection given <paramref name="itemCount"/> values are added.
         /// </summary>
         /// <param name="itemCount">The number of items that are theoretically being added.</param>
-        /// <parame name="size"></param>
-        /// <returns>The usage ratio for the underlying array given <paramref name="itemCount"/> values are added.</returns>
+        /// <param name="size">The size of the theoretical collection.</param>
+        /// <returns>The usage ratio for some <paramref name="size"/> collection given <paramref name="itemCount"/> values are added.</returns>
         private decimal Usage(int itemCount, int size){
             return itemCount/size;
         }
 
+        /// <summary>
+        /// Initializes the underlying array <see cref="_heapArray"/> to an appropriate size given that
+        /// <paramref name="inputCollectionSize"/> items are going to be added to it. 
+        /// </summary>
+        /// <param name="inputCollectionSize">The number of items potentially being added to the <see cref="BinaryHeap{T}"/></param>
         private void InitializeUnderlyingArray(int inputCollectionSize){
             int size = Math.Max(DEFAULT_SIZE, MathUtils.CeilingToPowerOfTwo(inputCollectionSize, strict: false));
             if(Usage(inputCollectionSize, size) > .9m && size != int.MaxValue){
@@ -294,15 +345,16 @@ namespace BananaTurtles.CSharp.DataStructures
             _heapArray = new T[size];
         }
 
-        private void Heapify(){
+        private void BubbleUp(){
 
         }
 
-        private void SiftDown(){
+        private void Heapify(){
 
         }
         #endregion
 
+        #region Enums
         /// <summary>
         /// Defines constants for types of heaps: Min and Max.
         /// </summary>
@@ -310,5 +362,6 @@ namespace BananaTurtles.CSharp.DataStructures
             Max,
             Min
         }
+        #endregion
     }
 }
