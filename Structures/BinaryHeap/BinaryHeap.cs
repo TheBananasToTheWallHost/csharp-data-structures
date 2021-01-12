@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using BananaTurtles.CSharp.Extensions;
 using BananaTurtles.CSharp.Utils;
 
 namespace BananaTurtles.CSharp.DataStructures.Heaps{
@@ -174,7 +175,29 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps{
         }
 
         public virtual bool Remove(int index){
+            if(index < 0){
+                throw new ArgumentOutOfRangeException($"Negative value used for {nameof(index)}.");
+            }
+            if(index >= Count){
+                throw new ArgumentOutOfRangeException($"Value used for {nameof(index)} exceeds the number of items stored in the heap.");
+            }
 
+            if(index == Count - 1){
+                Count--;
+                return true;
+            }
+
+            if(index == 0){
+                return Pop(out T _ );
+            }
+
+            T removedValue = _heapArray[index];
+            T replacementValue = _heapArray[Count - 1];
+            _heapArray.Swap(index, Count - 1);
+            Count--;
+
+            RestoreHeap(replacementValue, removedValue, index);
+            return true;
         }
 
         public virtual IEnumerator<T> GetEnumerator()
@@ -189,9 +212,17 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps{
             return this.GetEnumerator();
         }
 
+        public abstract void IncreaseValue();
+
+        public abstract void DecreaseValue();
+
+        public abstract void ChangeValue();
+
         protected abstract void BubbleUp(int startingIndex);
 
         protected abstract void Heapify(int startingIndex);
+
+        protected abstract void RestoreHeap(T replacementValue, T removedValue, int removalIndex);
 
         /// <summary>
         /// Grows the size of the underlying array <see cref="_heapArray"/> in order to make sure items can always be added to the 
@@ -199,7 +230,6 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps{
         /// </summary>
         /// <returns></returns>
         protected virtual bool GrowUnderlyingArray(){
-            
             if(Usage(Count) < .9m || _heapArray.Length == Int32.MaxValue){
                 return false;
             }
@@ -242,6 +272,19 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps{
                 size = MathUtils.CeilingToPowerOfTwo(size + 1, strict: false);
             }
             _heapArray = new T[size];
+        }
+
+        protected virtual bool ShrinkUnderlyingArray(){
+            if(Usage(Count) > .25m || _heapArray.Length == DEFAULT_SIZE){
+                return false;
+            }
+            
+            int newSize = MathUtils.FloorToPowerOfTwo(_heapArray.Length - 1); 
+            T[] newHeapArray = new T[newSize];
+            _heapArray.CopyTo(newHeapArray, 0);
+            _heapArray = newHeapArray;
+
+            return true;
         }
     }
 }
