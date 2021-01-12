@@ -271,8 +271,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         public bool Contains(T value, out int index){
-            int at = Array.IndexOf(_heapArray, value);
-            index = at;
+            index = Array.IndexOf(_heapArray, value);
 
             return index == -1 ? false : true;
         }
