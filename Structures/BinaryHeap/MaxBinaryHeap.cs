@@ -5,6 +5,12 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
 {
     public class MaxBinaryHeap<T> : BinaryHeap<T> where T : IComparable<T>
     {
+        /// <summary>
+        /// Changes the value of the item at <paramref name="index"/> to <paramref name="newValue"/>.
+        /// </summary>
+        /// <param name="index">The index to change the value of.</param>
+        /// <param name="newValue">The new value for the heap item at <paramref name="index"/>.</param>
+        /// <exception cref="ArgumentOutOfRangeException"/>
         public override void ChangeValue(int index, T newValue)
         {
             if (!IsValidIndex(index))
