@@ -133,8 +133,6 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
 
 
         #region Heap functionality
-
-
         #region Concrete Methods
         /// <summary>
         /// Gets the value at the top of the heap and removes it from the heap.
@@ -323,6 +321,10 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <param name="currentIndex">The index of the value currently being considered for moving down.</param>
         protected abstract void Heapify(int currentIndex);
 
+        public abstract void PopAndInsert();
+
+        public abstract void InsertAndPop();
+
         public abstract void IncreaseValue(int index, T newValue);
         public abstract void IncreaseValue(T oldValue, T newValue);
         public abstract void DecreaseValue(int index, T newValue);
@@ -332,7 +334,6 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         public abstract bool TryChangeValue(int index, T newValue);
         public abstract bool TryChangeValue(T oldValue, T newValue);
         #endregion
-        
         #endregion
 
 

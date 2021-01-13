@@ -256,5 +256,15 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             _heapArray.Swap(currentIndex, smallestValueIndex);
             Heapify(smallestValueIndex);
         }
+    
+        public override void InsertAndPop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PopAndInsert()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

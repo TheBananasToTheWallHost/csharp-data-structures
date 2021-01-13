@@ -13,19 +13,23 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <exception cref="ArgumentOutOfRangeException"/>
         public override void ChangeValue(int index, T newValue)
         {
-            if(!IsValidIndex(index)){
+            if (!IsValidIndex(index))
+            {
                 throw new ArgumentOutOfRangeException($"The value:[{index}] of {nameof(index)} does not point to a valid heap item.");
             }
 
             T oldValue = _heapArray[index];
 
-            if(newValue.CompareTo(oldValue) < 0){
+            if (newValue.CompareTo(oldValue) < 0)
+            {
                 DecreaseValue(index, newValue);
             }
-            else if(newValue.CompareTo(oldValue) > 0){
+            else if (newValue.CompareTo(oldValue) > 0)
+            {
                 IncreaseValue(index, newValue);
             }
-            else{
+            else
+            {
                 return;
             }
         }
@@ -40,7 +44,8 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         {
             int valueIndex = Array.IndexOf(_heapArray, oldValue);
 
-            if(valueIndex == -1){
+            if (valueIndex == -1)
+            {
                 throw new ArgumentException($"No item matching {oldValue} was found.");
             }
 
@@ -58,13 +63,15 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <exception cref="ArgumentException"/>
         public override void DecreaseValue(int index, T newValue)
         {
-            if(!IsValidIndex(index)){
+            if (!IsValidIndex(index))
+            {
                 throw new ArgumentOutOfRangeException($"The value:[{index}] of {nameof(index)} does not point to a valid heap item.");
             }
 
             T oldValue = _heapArray[index];
-            
-            if(newValue.CompareTo(oldValue) >= 0){
+
+            if (newValue.CompareTo(oldValue) >= 0)
+            {
                 throw new ArgumentException($"The value of {nameof(newValue)} is not smaller than the value at {index}");
             }
 
@@ -85,11 +92,13 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         {
             int valueIndex = Array.IndexOf(_heapArray, oldValue);
 
-            if(newValue.CompareTo(oldValue) >= 0){
+            if (newValue.CompareTo(oldValue) >= 0)
+            {
                 throw new ArgumentException($"The value of {nameof(newValue)} is not smaller than the value of {nameof(oldValue)}");
             }
 
-            if(valueIndex == -1){
+            if (valueIndex == -1)
+            {
                 throw new InvalidOperationException($"No item matching {oldValue} was found.");
             }
 
@@ -107,13 +116,15 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <exception cref="ArgumentException"/>
         public override void IncreaseValue(int index, T newValue)
         {
-            if(!IsValidIndex(index)){
+            if (!IsValidIndex(index))
+            {
                 throw new ArgumentOutOfRangeException($"The value:[{index}] of {nameof(index)} does not point to a valid heap item.");
             }
 
             T oldValue = _heapArray[index];
-            
-            if(newValue.CompareTo(oldValue) <= 0){
+
+            if (newValue.CompareTo(oldValue) <= 0)
+            {
                 throw new ArgumentException($"The value of {nameof(newValue)} is not larger than the value at {index}");
             }
 
@@ -134,11 +145,13 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         {
             int valueIndex = Array.IndexOf(_heapArray, oldValue);
 
-            if(newValue.CompareTo(oldValue) <= 0){
+            if (newValue.CompareTo(oldValue) <= 0)
+            {
                 throw new ArgumentException($"The value of {nameof(newValue)} is not larger than the value of {nameof(oldValue)}");
             }
 
-            if(valueIndex == -1){
+            if (valueIndex == -1)
+            {
                 throw new InvalidOperationException($"No item matching {oldValue} was found.");
             }
 
@@ -209,26 +222,40 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             int leftChild = LeftChild(currentIndex);
             int rightChild = RightChild(currentIndex);
 
-            if(leftChild == -1 && rightChild == -1){
+            if (leftChild == -1 && rightChild == -1)
+            {
                 return;
             }
 
             int smallestValueIndex = currentIndex;
 
-            if(leftChild != -1 && _heapArray[leftChild].CompareTo(_heapArray[smallestValueIndex]) < 0){
+            if (leftChild != -1 && _heapArray[leftChild].CompareTo(_heapArray[smallestValueIndex]) < 0)
+            {
                 smallestValueIndex = leftChild;
             }
 
-            if(rightChild != -1 && _heapArray[rightChild].CompareTo(_heapArray[smallestValueIndex]) < 0){
+            if (rightChild != -1 && _heapArray[rightChild].CompareTo(_heapArray[smallestValueIndex]) < 0)
+            {
                 smallestValueIndex = rightChild;
             }
 
-            if(smallestValueIndex == currentIndex){
+            if (smallestValueIndex == currentIndex)
+            {
                 return;
             }
 
             _heapArray.Swap(currentIndex, smallestValueIndex);
             Heapify(smallestValueIndex);
+        }
+
+        public override void InsertAndPop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PopAndInsert()
+        {
+            throw new NotImplementedException();
         }
     }
 }

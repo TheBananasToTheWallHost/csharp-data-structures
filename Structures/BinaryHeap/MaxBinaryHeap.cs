@@ -249,5 +249,14 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             Heapify(largestValueIndex);
         }
 
+        public override void InsertAndPop()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void PopAndInsert()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
