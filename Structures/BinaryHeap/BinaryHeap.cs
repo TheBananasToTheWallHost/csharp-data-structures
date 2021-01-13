@@ -197,6 +197,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps{
             Count--;
 
             RestoreHeap(replacementValue, removedValue, index);
+            ShrinkUnderlyingArray();
             return true;
         }
 
@@ -212,15 +213,25 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps{
             return this.GetEnumerator();
         }
 
-        public abstract void IncreaseValue();
+        public abstract void IncreaseValue(int index, T newValue);
 
-        public abstract void DecreaseValue();
+        public abstract void IncreaseValue(T oldValue, T newValue);
 
-        public abstract void ChangeValue();
+        public abstract void DecreaseValue(int index, T newValue);
 
-        protected abstract void BubbleUp(int startingIndex);
+        public abstract void DecreaseValue(T oldValue, T newValue);
 
-        protected abstract void Heapify(int startingIndex);
+        public abstract void ChangeValue(int index, T newValue);
+
+        public abstract void ChangeValue(T oldValue, T newValue);
+
+        public abstract bool TryChangeValue(int index, T newValue);
+
+        public abstract bool TryChangeValue(T oldValue, T newValue);
+
+        protected abstract void BubbleUp(int currentIndex);
+
+        protected abstract void Heapify(int currentIndex);
 
         protected abstract void RestoreHeap(T replacementValue, T removedValue, int removalIndex);
 
@@ -285,6 +296,10 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps{
             _heapArray = newHeapArray;
 
             return true;
+        }
+
+        protected virtual bool IsValidIndex(int index){
+            return (index < Count && index >= 0); 
         }
     }
 }
