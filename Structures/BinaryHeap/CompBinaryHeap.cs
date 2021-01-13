@@ -257,14 +257,28 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             Heapify(smallestValueIndex);
         }
     
-        public override void InsertAndPop()
+        public override T AddAndPop(T value)
         {
-            throw new NotImplementedException();
+            T top;
+            if(Count < 1 || _comparer.Compare(value, top = _heapArray[0]) <= 0){
+                return value;
+            }
+            
+            _heapArray[0] = value;
+            Heapify(0);
+            return top;
         }
 
-        public override void PopAndInsert()
+        public override T PopAndAdd(T value)
         {
-            throw new NotImplementedException();
+            if(Count < 1){
+                throw new InvalidOperationException("There are no items to pop.");
+            }
+
+            T top = _heapArray[0];
+            _heapArray[0] = value;
+            Heapify(0);
+            return top;
         }
     }
 }

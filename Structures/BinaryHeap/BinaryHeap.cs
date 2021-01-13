@@ -321,9 +321,20 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <param name="currentIndex">The index of the value currently being considered for moving down.</param>
         protected abstract void Heapify(int currentIndex);
 
-        public abstract void PopAndInsert();
+        /// <summary>
+        /// Pops the topmost item in the heap and then adds <paramref name="value"/>. 
+        /// </summary>
+        /// <param name="value">The new value to add to the heap.</param>
+        /// <returns>The topmost item in the heap.</returns>
+        /// <exception cref="InvalidOperationException"/>
+        public abstract T PopAndAdd(T value);
 
-        public abstract void InsertAndPop();
+        /// <summary>
+        /// Adds <paramref name="value"/> to the heap and pops the topmost item.
+        /// </summary>
+        /// <param name="value">The new value to add to the heap.</param>
+        /// <returns>The topmost item in the heap.</returns>
+        public abstract T AddAndPop(T value);
 
         public abstract void IncreaseValue(int index, T newValue);
         public abstract void IncreaseValue(T oldValue, T newValue);
