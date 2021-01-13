@@ -78,6 +78,12 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             DecreaseValue(valueIndex, newValue);
         }
 
+        /// <summary>
+        /// Increases the value of the item at <paramref name="index"/> to <paramref name="newValue"/> relative to the 
+        /// <see cref="IComparer{T}"/> being used by the <see cref="CompBinaryHeap{T}"/>.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <param name="newValue"></param>
         public override void IncreaseValue(int index, T newValue)
         {
             if (!IsValidIndex(index))
@@ -138,7 +144,6 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
                 return false;
             }
         }
-
 
         protected override void BubbleUp(int currentIndex)
         {

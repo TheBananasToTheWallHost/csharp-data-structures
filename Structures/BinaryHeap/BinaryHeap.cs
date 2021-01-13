@@ -12,6 +12,10 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         protected readonly int DEFAULT_SIZE = 16;
 
         protected int _count;
+
+        /// <summary>
+        /// Gets the number of values in the BinaryHeap.
+        /// </summary>
         public virtual int Count
         {
             get => _count;
@@ -19,17 +23,28 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         protected bool _isReadOnly;
-        public virtual bool IsReadOnly => throw new NotImplementedException();
+        public virtual bool IsReadOnly => false;
 
         #region ICollection Functionality
 
+        /// <summary>
+        /// Clears the contents of the <see cref="BinaryHeap{T}"/>.
+        /// </summary>
         public virtual void Clear()
         {
             _heapArray = new T[DEFAULT_SIZE];
             Count = 0;
         }
 
-
+        /// <summary>
+        /// Copies all values in the heap into <paramref name="array"/> starting at <paramref name="arrayIndex"/>. Be aware that
+        /// this only creates a shallow copy when using reference types.
+        /// </summary>
+        /// <param name="array">The array to copy to.</param>
+        /// <param name="arrayIndex">The index to begin copying at.</param>
+        /// <exception cref="ArgumentException"/>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentOutOfRangeException"/>
         public virtual void CopyTo(T[] array, int arrayIndex)
         {
             if (array is null)
@@ -53,7 +68,10 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             _heapArray.CopyTo(array, arrayIndex);
         }
 
-
+        /// <summary>
+        /// Returns an <see cref="IEnumerator{T}"/> for the <see cref="BinaryHeap{T}"/>.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerator{T}"/> for the <see cref="BinaryHeap{T}"/>.</returns>
         public virtual IEnumerator<T> GetEnumerator()
         {
             for (int i = 0; i < Count; i++)
@@ -62,6 +80,10 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             }
         }
 
+        /// <summary>
+        /// Returns an <see cref="IEnumerator"/> using the generic <see cref="GetEnumerator()" implementation/>.
+        /// </summary>
+        /// <returns>An <see cref="IEnumerator"/>.</returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
@@ -70,14 +92,26 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
 
 
         #region Overlapping ICollection/Heap functionality
+
+        /// <summary>
+        /// Removes the first occurence of <paramref name="item"/>. The first occurence in this case refers to the shallowest, and 
+        /// leftmost occurence. The return value indicates whether <paramref name="item"/> was successfully removed.
+        /// </summary>
+        /// <param name="item">The item to remove.</param>
+        /// <returns>True if <paramref name="item"/> is removed, false otherwise.</returns>
         public virtual bool Remove(T item)
         {
             int index = Array.IndexOf(_heapArray, item);
+
+            if(index == -1){
+                return false;
+            }
+
             return Remove(index);
         }
 
         /// <summary>
-        /// Adds the given value to the BinaryHeap.
+        /// Adds the given value to the BinaryHeap. No values are added once the heap reaches its maximum size.
         /// </summary>
         /// <param name="value">The value to add.</param>
         public virtual void Add(T value)
@@ -85,6 +119,11 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             TryAddValue(value);
         }
 
+        /// <summary>
+        /// Checks if <paramref name="value"/> is found within the <see cref="BinaryHeap{T}"/>.
+        /// </summary>
+        /// <param name="value">The value to check for.</param>
+        /// <returns>True if the <see cref="BinaryHeap{T}"/> contains <paramref name="value"/>, false otherwise.</returns>
         public virtual bool Contains(T value)
         {
             return Contains(value, out int _);
@@ -94,6 +133,14 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
 
 
         #region Heap functionality
+
+
+        #region Concrete Methods
+        /// <summary>
+        /// Gets the value at the top of the heap and removes it from the heap.
+        /// </summary>
+        /// <returns>The value at the top of the heap.</returns>
+        /// <exception cref="InvalidOperationException"/>
         public virtual T Pop()
         {
             if (Count < 1)
@@ -105,6 +152,14 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             return value;
         }
 
+        /// <summary>
+        /// Gets the value at the top of the heap and removes it from the heap. The return value indicates whether or not the 
+        /// operation succeeded.
+        /// </summary>
+        /// <param name="topValue">Contains the value at the top of the heap if the operation succeeded, otherwise it will contain
+        /// the default value for the type held by the heap. The operation fails if the heap is empty. The passed in value will be 
+        /// overwritten.</param>
+        /// <returns>True if the operation succeeded, false otherwise.</returns>
         public virtual bool Pop(out T topValue)
         {
             if (Count < 1)
@@ -125,31 +180,20 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             return true;
         }
 
-        public abstract void IncreaseValue(int index, T newValue);
-
-        public abstract void IncreaseValue(T oldValue, T newValue);
-
-        public abstract void DecreaseValue(int index, T newValue);
-
-        public abstract void DecreaseValue(T oldValue, T newValue);
-
-        public abstract void ChangeValue(int index, T newValue);
-
-        public abstract void ChangeValue(T oldValue, T newValue);
-
-        public abstract bool TryChangeValue(int index, T newValue);
-
-        public abstract bool TryChangeValue(T oldValue, T newValue);
-
+        /// <summary>
+        /// Removes the value at <paramref name="index"/>. The return value indicates whether the operation succeeded.
+        /// </summary>
+        /// <param name="index">The index whose value will be removed.</param>
+        /// <returns>True if the value at <paramref name="index"/> is removed, false otherwise.</returns>
         public virtual bool Remove(int index)
         {
             if (index < 0)
             {
-                throw new ArgumentOutOfRangeException($"Negative value used for {nameof(index)}.");
+                return false;
             }
             if (index >= Count)
             {
-                throw new ArgumentOutOfRangeException($"Value used for {nameof(index)} exceeds the number of items stored in the heap.");
+                return false;
             }
 
             if (index == Count - 1)
@@ -173,7 +217,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         /// <summary>
-        /// Adds the given value to the BinaryHeap. The return value indicates whether the operation
+        /// Adds the given value to the <see cref="BinaryHeap{T}"/>. The return value indicates whether the operation
         /// succeeeded.
         /// </summary>
         /// <param name="value">The value to add.</param>
@@ -196,6 +240,13 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             return true;
         }
 
+        /// <summary>
+        /// Checks if <paramref name="value"/> is found within the <see cref="BinaryHeap{T}"/>.
+        /// </summary>
+        /// <param name="value">The value to check for.</param>
+        /// <param name="index">Contains the index of the first occurrence of <paramref name="value"/> if found,
+        /// -1 otherwise.</param>
+        /// <returns>True if the <see cref="BinaryHeap{T}"/> contains <paramref name="value"/>, false otherwise.</returns>
         public virtual bool Contains(T value, out int index)
         {
             index = Array.IndexOf(_heapArray, value);
@@ -254,18 +305,43 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             return parentIndex >= Count ? -1 : parentIndex;
         }
 
+        #endregion
+
+        #region Abstract Methods
+    
+        /// <summary>
+        /// This operation is also known as bubble-up, percolate-up, sift-up, trickle-up, swim-up, heapify-up, or cascade-up.
+        /// This operation maintains heap order by moving values up to their appropriate places within the heap.
+        /// </summary>
+        /// <param name="currentIndex">The index of the value currently being considered for moving up.</param>
         protected abstract void BubbleUp(int currentIndex);
 
+        /// <summary>
+        /// This operation is also known as bubble-down, percolate-down, sift-down, sink-down, trickle down, heapify-down, 
+        /// or cascade-down. This operation maintains heap order by moving values down to their appropriate places within the heap.  
+        /// </summary>
+        /// <param name="currentIndex">The index of the value currently being considered for moving down.</param>
         protected abstract void Heapify(int currentIndex);
+
+        public abstract void IncreaseValue(int index, T newValue);
+        public abstract void IncreaseValue(T oldValue, T newValue);
+        public abstract void DecreaseValue(int index, T newValue);
+        public abstract void DecreaseValue(T oldValue, T newValue);
+        public abstract void ChangeValue(int index, T newValue);
+        public abstract void ChangeValue(T oldValue, T newValue);
+        public abstract bool TryChangeValue(int index, T newValue);
+        public abstract bool TryChangeValue(T oldValue, T newValue);
+        #endregion
+        
         #endregion
 
 
         #region Helpers
         /// <summary>
         /// Grows the size of the underlying array <see cref="_heapArray"/> in order to make sure items can always be added to the 
-        /// <see cref="FlexBinaryHeap{T}"/>. The underlying array is grown when there is over 90% usage. 
+        /// <see cref="BinaryHeap{T}"/>. The underlying array is grown when there is over 90% usage. 
         /// </summary>
-        /// <returns></returns>
+        /// <returns>True if <see cref="_heapArray"/> was grown, false otherwise.</returns>
         protected virtual bool GrowUnderlyingArray()
         {
             if (Usage(Count) < .9m || _heapArray.Length == Int32.MaxValue)
@@ -317,6 +393,11 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             _heapArray = new T[size];
         }
 
+        /// <summary>
+        /// Shrinks the size of the underlying array <see cref="_heapArray"/> in order to make sure space isn't being used
+        /// unnecessarily. The underlying array is shrunk when there is usage less than or equal to 25%. 
+        /// </summary>
+        /// <returns>True if <see cref="_heapArray"/> was shrunk, false otherwise.</returns>
         protected virtual bool ShrinkUnderlyingArray()
         {
             if (Usage(Count) > .25m || _heapArray.Length == DEFAULT_SIZE)
@@ -332,6 +413,11 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             return true;
         }
 
+        /// <summary>
+        /// Checks if the input index is valid given the state of the <see cref="BinaryHeap{T}"/>.
+        /// </summary>
+        /// <param name="index">The index to check</param>
+        /// <returns>True if the index is valid, false otherwise.</returns>
         protected virtual bool IsValidIndex(int index)
         {
             return (index < Count && index >= 0);

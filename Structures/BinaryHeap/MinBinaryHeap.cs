@@ -66,6 +66,12 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             DecreaseValue(valueIndex, newValue);
         }
 
+        /// <summary>
+        /// Increases the value of the item at <paramref name="index"/> to <paramref name="newValue"/>.
+        /// </summary>
+        /// <param name="index">The index to change the value of.</param>
+        /// <param name="newValue">The new value for the heap item at <paramref name="index"/>.</param>
+        /// 
         public override void IncreaseValue(int index, T newValue)
         {
             if(!IsValidIndex(index)){
@@ -82,6 +88,11 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             Heapify(index);
         }
 
+        /// <summary>
+        /// Increases the value of the first occurrence of <paramref name="oldValue"/> to <paramref name="newValue"/>.
+        /// </summary>
+        /// <param name="oldValue">The value currently in the heap that will be updated to <paramref name="newValue"/></param>
+        /// <param name="newValue">The new value for the first occurence of <paramref name="oldValue"/></param>
         public override void IncreaseValue(T oldValue, T newValue)
         {
             int valueIndex = Array.IndexOf(_heapArray, oldValue);
