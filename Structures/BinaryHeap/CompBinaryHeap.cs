@@ -8,20 +8,42 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
     public class CompBinaryHeap<T> : BinaryHeap<T>
     {
         private IComparer<T> _comparer;
+
+        /// <summary>
+        /// Gets or sets the <see cref="IComparer{T}"/> used in the <see cref="CompBinaryHeap{T}"/>. It can only be set
+        /// if <see cref="CanChangeComparer"/> was set to true when instantiating the <see cref="CompBinaryHeap{T}"/>. Changing Comparer
+        /// will result in the heap being rebuilt.
+        /// </summary>
+        /// <value>Gets/sets the value of the <see cref="IComparer{T}"/>, <see cref="_comparer"/></value>
         public IComparer<T> Comparer{
             get => _comparer;
             set{
-                _comparer = value;
-                BuildHeap();
+                if(CanChangeComparer){
+                    if(!_comparer.Equals(value)){
+                        _comparer = value;
+                        BuildHeap();
+                    }
+                }
             }
+        }
+
+        private bool _canChangeComparer;
+
+        /// <summary>
+        /// Returns whether or not the <see cref="CompBinaryHeap{T}"/>'s <see cref="IComparer{T}"/> can be changed. 
+        /// </summary>
+        /// <value>Gets the value of the boolean, <see cref="_canChangeComparer"/></value>
+        public bool CanChangeComparer{
+            get => _canChangeComparer;
         }
 
         #region Constructors
         /// <summary>
         /// Initializes a new instance of the <see cref="CompBinaryHeap{T}"/> class that is empty.
         /// </summary>
-        public CompBinaryHeap(IComparer<T> comparer)
+        public CompBinaryHeap(IComparer<T> comparer, bool canChangeComparer = false)
         {
+            _canChangeComparer = canChangeComparer;
             _comparer = comparer;
             _heapArray = new T[DEFAULT_SIZE];
             Count = 0;
@@ -32,7 +54,8 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <paramref name="enumerable"/>.
         /// </summary>
         /// <param name="enumerable">An IEnumerable whose values will be added to the BinaryHeap.</param>
-        public CompBinaryHeap(IEnumerable<T> enumerable, IComparer<T> comparer){
+        public CompBinaryHeap(IEnumerable<T> enumerable, IComparer<T> comparer, bool canChangeComparer = false){
+            _canChangeComparer = canChangeComparer;
             _comparer = comparer;
 
             Count = enumerable.Count();
@@ -53,8 +76,9 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <paramref name="span"/>. 
         /// </summary>
         /// <param name="span">A Span whoe values will be added to the BinaryHeap.</param>
-        public CompBinaryHeap(Span<T> span, IComparer<T> comparer)
+        public CompBinaryHeap(Span<T> span, IComparer<T> comparer, bool canChangeComparer = false)
         {
+            _canChangeComparer = canChangeComparer;
             _comparer = comparer;
 
             Count = span.Length;
@@ -72,8 +96,9 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <paramref name="array"/>.  
         /// </summary>
         /// <param name="array">An Array whose values will be added to the BinaryHeap.</param>
-        public CompBinaryHeap(T[] array, IComparer<T> comparer)
+        public CompBinaryHeap(T[] array, IComparer<T> comparer, bool canChangeComparer = false)
         {
+            _canChangeComparer = canChangeComparer;
             _comparer = comparer;
 
             Count = array.Length;
@@ -88,7 +113,8 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         /// <paramref name="list"/>.  
         /// </summary>
         /// <param name="list">An IList whose values will be added to the BinaryHeap.</param>
-        public CompBinaryHeap(IList<T> list, IComparer<T> comparer){
+        public CompBinaryHeap(IList<T> list, IComparer<T> comparer, bool canChangeComparer = false){
+            _canChangeComparer = canChangeComparer;
             _comparer = comparer;
 
             Count = list.Count;
