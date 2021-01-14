@@ -19,7 +19,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         public virtual int Count
         {
             get => _count;
-            private set => _count = value;
+            protected set => _count = value;
         }
 
         protected bool _isReadOnly;
@@ -303,6 +303,15 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             return parentIndex >= Count ? -1 : parentIndex;
         }
 
+        /// <summary>
+        /// "Builds" a heap by ensuring the heap property is respected in all subtrees found within <see cref="_heapArray"/>.
+        /// </summary>
+        protected virtual void BuildHeap(){
+            for (int i = _heapArray.Length/2; i >= 0; i--)
+            {
+                Heapify(i);
+            }
+        }
         #endregion
 
         #region Abstract Methods

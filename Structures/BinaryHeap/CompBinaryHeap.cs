@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using BananaTurtles.CSharp.Extensions;
 
 namespace BananaTurtles.CSharp.DataStructures.Heaps
@@ -7,7 +8,98 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
     public class CompBinaryHeap<T> : BinaryHeap<T>
     {
         private IComparer<T> _comparer;
+        public IComparer<T> Comparer{
+            get => _comparer;
+            set{
+                _comparer = value;
+                BuildHeap();
+            }
+        }
 
+        #region Constructors
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompBinaryHeap{T}"/> class that is empty.
+        /// </summary>
+        public CompBinaryHeap(IComparer<T> comparer)
+        {
+            _comparer = comparer;
+            _heapArray = new T[DEFAULT_SIZE];
+            Count = 0;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompBinaryHeap{T}"/> class that is filled with the values in 
+        /// <paramref name="enumerable"/>.
+        /// </summary>
+        /// <param name="enumerable">An IEnumerable whose values will be added to the BinaryHeap.</param>
+        public CompBinaryHeap(IEnumerable<T> enumerable, IComparer<T> comparer){
+            _comparer = comparer;
+
+            Count = enumerable.Count();
+            InitializeUnderlyingArray(Count);
+            
+            var enumerator = enumerable.GetEnumerator();
+
+            int i = 0;
+            while(enumerator.MoveNext()){
+                _heapArray[i++] = enumerator.Current;
+            }
+
+            BuildHeap();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompBinaryHeap{T}"> class that is filled with the values in 
+        /// <paramref name="span"/>. 
+        /// </summary>
+        /// <param name="span">A Span whoe values will be added to the BinaryHeap.</param>
+        public CompBinaryHeap(Span<T> span, IComparer<T> comparer)
+        {
+            _comparer = comparer;
+
+            Count = span.Length;
+            InitializeUnderlyingArray(Count);
+            for (int i = 0; i < span.Length; i++)
+            {
+                _heapArray[i] = span[i];
+            }
+
+            BuildHeap();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompBinaryHeap{T}"> class that is filled with the values in 
+        /// <paramref name="array"/>.  
+        /// </summary>
+        /// <param name="array">An Array whose values will be added to the BinaryHeap.</param>
+        public CompBinaryHeap(T[] array, IComparer<T> comparer)
+        {
+            _comparer = comparer;
+
+            Count = array.Length;
+            InitializeUnderlyingArray(Count);
+            array.CopyTo(_heapArray, 0);
+
+            BuildHeap();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompBinaryHeap{T}"> class that is filled with the values in 
+        /// <paramref name="list"/>.  
+        /// </summary>
+        /// <param name="list">An IList whose values will be added to the BinaryHeap.</param>
+        public CompBinaryHeap(IList<T> list, IComparer<T> comparer){
+            _comparer = comparer;
+
+            Count = list.Count;
+            InitializeUnderlyingArray(Count);
+            list.CopyTo(_heapArray, 0);
+
+            BuildHeap();
+        }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Changes the value of the item at <paramref name="index"/> to <paramref name="newValue"/>.
         /// </summary>
@@ -280,5 +372,6 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
             Heapify(0);
             return top;
         }
+        #endregion
     }
 }
