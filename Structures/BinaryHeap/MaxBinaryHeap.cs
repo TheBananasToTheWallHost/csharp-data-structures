@@ -9,7 +9,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
     {
         #region Constructors
         /// <summary>
-        /// Initializes a new instance of the <see cref="MinBinaryHeap{T}"/> class that is empty.
+        /// Initializes a new instance of the <see cref="MaxBinaryHeap{T}"/> class that is empty.
         /// </summary>
         public MaxBinaryHeap()
         {
@@ -18,7 +18,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MinBinaryHeap{T}"/> class that is filled with the values in 
+        /// Initializes a new instance of the <see cref="MaxBinaryHeap{T}"/> class that is filled with the values in 
         /// <paramref name="enumerable"/>.
         /// </summary>
         /// <param name="enumerable">An IEnumerable whose values will be added to the BinaryHeap.</param>
@@ -37,7 +37,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MinBinaryHeap{T}"> class that is filled with the values in 
+        /// Initializes a new instance of the <see cref="MaxBinaryHeap{T}"> class that is filled with the values in 
         /// <paramref name="span"/>. 
         /// </summary>
         /// <param name="span">A Span whoe values will be added to the BinaryHeap.</param>
@@ -54,7 +54,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MinBinaryHeap{T}"> class that is filled with the values in 
+        /// Initializes a new instance of the <see cref="MaxBinaryHeap{T}"> class that is filled with the values in 
         /// <paramref name="array"/>.  
         /// </summary>
         /// <param name="array">An Array whose values will be added to the BinaryHeap.</param>
@@ -68,7 +68,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MinBinaryHeap{T}"> class that is filled with the values in 
+        /// Initializes a new instance of the <see cref="MaxBinaryHeap{T}"> class that is filled with the values in 
         /// <paramref name="list"/>.  
         /// </summary>
         /// <param name="list">An IList whose values will be added to the BinaryHeap.</param>
