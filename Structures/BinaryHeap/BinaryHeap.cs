@@ -65,7 +65,9 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
                 throw new ArgumentOutOfRangeException($"Negative value used for {nameof(arrayIndex)}.");
             }
 
-            _heapArray.CopyTo(array, arrayIndex);
+            for(int i = 0, target = arrayIndex; i < Count; i++, target++){
+                array[target] = _heapArray[i];
+            }
         }
 
         /// <summary>

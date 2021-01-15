@@ -38,7 +38,7 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MinBinaryHeap{T}"> class that is filled with the values in 
+        /// Initializes a new instance of the <see cref="MinBinaryHeap{T}"/> class that is filled with the values in 
         /// <paramref name="span"/>. 
         /// </summary>
         /// <param name="span">A Span whoe values will be added to the BinaryHeap.</param>
