@@ -170,11 +170,10 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
 
             T value = _heapArray[0];
 
-            int replacementIndex = 0;
-            _heapArray[replacementIndex] = _heapArray[Count - 1];
+            _heapArray[0] = _heapArray[Count - 1];
             Count--;
 
-            Heapify(replacementIndex);
+            Heapify(0);
 
             topValue = value;
             return true;
@@ -306,10 +305,40 @@ namespace BananaTurtles.CSharp.DataStructures.Heaps
         }
 
         /// <summary>
+        /// This method sorts the heap's underlying <see cref="_heapArray"/>, copying values into <paramref name="array"/> as it performs the 
+        /// operation. Once the values have been copied, the heap rebuilds itself to maintain the heap property, though it might not
+        /// have the same exact structure it did before Sort() was called. It should be noted that a min heap will sort in descending 
+        /// order, a max heap in ascending order, and a comp heap in descending order relative to it's <see cref="IComparer{T}"/>.
+        /// </summary>
+        /// <param name="array">An array that the sorted contents of the heap are copied to.</param>
+        /// <exception cref="ArgumentNullException"/>
+        /// <exception cref="ArgumentException"/>
+        public virtual void Sort(T[] array){
+            if(array is null){
+                throw new ArgumentNullException($"{nameof(array)} is null.");
+            }
+            if(array.Length < Count){
+                throw new ArgumentException($"{nameof(array)} isn't large enough to hold the sorted contents of the heap.");
+            }
+
+            // Store original count so heap can be rebuilt once sorting is done. This is possible since pop doesn't delete a value,
+            // it just moves the value just past the end of the heap.
+            int realCount = Count;
+
+            for(int i = Count - 1; i >= 0; i--){
+                array[i] = Pop();
+            }
+
+            Count = realCount;
+            BuildHeap();
+
+        }
+
+        /// <summary>
         /// "Builds" a heap by ensuring the heap property is respected in all subtrees found within <see cref="_heapArray"/>.
         /// </summary>
         protected virtual void BuildHeap(){
-            for (int i = _heapArray.Length/2; i >= 0; i--)
+            for (int i = Count/2; i >= 0; i--)
             {
                 Heapify(i);
             }
